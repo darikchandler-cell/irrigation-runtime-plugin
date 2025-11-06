@@ -13,7 +13,7 @@ import {
 import { toast } from 'sonner@2.0.3';
 
 // Version number for the plugin
-const PLUGIN_VERSION = '1.0.0';
+const PLUGIN_VERSION = '1.1.0';
 
 interface SubmissionDetail {
   id: number;
