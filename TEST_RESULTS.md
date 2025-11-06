@@ -136,3 +136,4 @@ docker-compose logs wordpress | grep -i error
 **Tested**: Docker environment verified, plugin files validated
 
 
+

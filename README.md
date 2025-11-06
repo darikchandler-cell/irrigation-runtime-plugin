@@ -126,3 +126,4 @@ For issues, feature requests, or questions, please open an issue on GitHub.
 **Author**: Vonareva  
 **Plugin URI**: https://vonareva.com/irrigation-calculator
 
+

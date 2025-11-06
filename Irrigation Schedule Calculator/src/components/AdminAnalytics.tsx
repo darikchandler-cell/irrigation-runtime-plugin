@@ -157,14 +157,24 @@ export default function AdminAnalytics() {
 
   const fetchAnalyticsData = async () => {
     setLoading(true);
-    const data = await getAdminAnalytics(dateRange, currentPage);
-    if (data) {
-      setStats(data.stats);
-      setRecentSchedules(data.schedules);
-      setPagination(data.pagination);
-      setChartData(data.chartData);
+    try {
+      const data = await getAdminAnalytics(dateRange, currentPage);
+      if (data) {
+        setStats(data.stats || {});
+        setRecentSchedules(data.schedules || []);
+        setPagination(data.pagination || { currentPage: 1, totalPages: 1, totalItems: 0, perPage: 10 });
+        setChartData(data.chartData || []);
+      } else {
+        // No data - show empty state or error
+        console.warn('No analytics data received');
+        toast.error('Failed to load analytics data. Check WordPress AJAX configuration.');
+      }
+    } catch (error) {
+      console.error('Error fetching analytics:', error);
+      toast.error('Error loading analytics data');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const fetchAPIStatus = async () => {
@@ -206,30 +216,33 @@ export default function AdminAnalytics() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen">
-      {/* WordPress Admin Header Simulation */}
-      <div className="bg-[#1d2327] text-white px-6 py-4 border-b border-gray-700 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h1 className="text-xl">Irrigation Calculator Settings</h1>
-          <span className="text-xs bg-white/10 px-2 py-1 rounded text-gray-300">
-            v{PLUGIN_VERSION}
-          </span>
-        </div>
-        <a 
-          href="/" 
-          onClick={(e) => {
-            e.preventDefault();
-            window.location.href = window.location.pathname;
-          }}
-          className="flex items-center gap-2 text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded transition-colors"
-        >
-          <X className="w-4 h-4" />
-          Exit Admin
-        </a>
-      </div>
-
-      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="w-full">
+    <div className="irrigation-admin-container" style={{ width: '100%', margin: 0, padding: 0 }}>
+      {/* WordPress admin already provides header and navigation - we just need content */}
+      <div className="irrigation-admin-content" style={{ width: '100%', margin: 0, padding: 0 }}>
+        {/* WordPress admin .wrap provides padding, we use full width */}
+        <style>{`
+          .irrigation-admin-container,
+          .irrigation-admin-content {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          .irrigation-admin-content > div {
+            width: 100% !important;
+            max-width: 100% !important;
+          }
+          /* WordPress admin compatibility */
+          .wrap .irrigation-admin-container {
+            padding: 0;
+            margin: 0;
+          }
+          /* Ensure tabs and content fit WordPress admin */
+          .irrigation-admin-content .bg-white {
+            margin: 0;
+          }
+        `}</style>
+        <div className="w-full" style={{ width: '100%', maxWidth: '100%' }}>
           {/* Tabs */}
           <div className="bg-white rounded-t-lg border-b border-gray-200 mb-0">
             <div className="flex gap-1 px-4 sm:px-6 overflow-x-auto">
@@ -289,6 +302,15 @@ export default function AdminAnalytics() {
                 transition={{ duration: 0.3 }}
                 className="min-w-0"
               >
+              {loading ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="text-center">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mb-4"></div>
+                    <p className="text-gray-600">Loading analytics data...</p>
+                  </div>
+                </div>
+              ) : (
+              <>
               {/* Header with Date Range */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
             <div>
@@ -576,6 +598,8 @@ export default function AdminAnalytics() {
               </div>
             )}
           </motion.div>
+              </>
+              )}
               </motion.div>
             )}
           </AnimatePresence>
@@ -951,7 +975,6 @@ export default function AdminAnalytics() {
             )}
           </AnimatePresence>
         </div>
-        </div>
 
         {/* Footer with version info */}
         <div className="mt-8 pt-6 border-t border-gray-300">
@@ -968,7 +991,6 @@ export default function AdminAnalytics() {
             </div>
           </div>
         </div>
-      </div>
 
       {/* Submission Detail Modal */}
       <AnimatePresence>
@@ -1154,7 +1176,9 @@ export default function AdminAnalytics() {
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+      </AnimatePresence>
+      </div>
+      </div>
     </div>
   );
 }
