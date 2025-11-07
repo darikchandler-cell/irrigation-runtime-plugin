@@ -26,14 +26,45 @@ export default function WateringRestrictions({
 
   useEffect(() => {
     // Load Google Places Autocomplete (if available)
-    if (typeof (window as any).google !== 'undefined' && locationInputRef.current) {
-      const autocomplete = new (window as any).google.maps.places.Autocomplete(locationInputRef.current);
-      autocomplete.addListener('place_changed', () => {
-        const place = autocomplete.getPlace();
-        if (place.formatted_address) {
-          handleLocationSelect(place.formatted_address);
+    // Wait for Google Maps API and Places library to be fully loaded
+    const initGooglePlaces = () => {
+      const google = (window as any).google;
+      if (
+        google &&
+        google.maps &&
+        google.maps.places &&
+        google.maps.places.Autocomplete &&
+        locationInputRef.current
+      ) {
+        try {
+          const autocomplete = new google.maps.places.Autocomplete(locationInputRef.current);
+          autocomplete.addListener('place_changed', () => {
+            const place = autocomplete.getPlace();
+            if (place && place.formatted_address) {
+              handleLocationSelect(place.formatted_address);
+            }
+          });
+        } catch (error) {
+          console.warn('Failed to initialize Google Places Autocomplete:', error);
         }
-      });
+      }
+    };
+
+    // Check if already loaded
+    if (typeof (window as any).google !== 'undefined') {
+      // Wait a bit for Places library to initialize
+      setTimeout(initGooglePlaces, 100);
+    } else {
+      // Wait for Google Maps API to load
+      const checkInterval = setInterval(() => {
+        if (typeof (window as any).google !== 'undefined') {
+          clearInterval(checkInterval);
+          setTimeout(initGooglePlaces, 100);
+        }
+      }, 100);
+
+      // Stop checking after 10 seconds
+      setTimeout(() => clearInterval(checkInterval), 10000);
     }
   }, []);
 

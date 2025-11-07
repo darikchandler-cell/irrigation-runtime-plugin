@@ -1,7 +1,6 @@
 import { Droplet, DollarSign, Cloud, Leaf, Zap, Globe, TrendingDown } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useState, useEffect } from 'react';
-import logoImage from 'figma:asset/045d67862979a2173d3073297ca5679229a01de1.png';
 import ControllerBrandIcon from './ControllerBrandIcon';
 import { getCumulativeStats } from '../utils/cumulativeStats';
 
@@ -61,7 +60,11 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
 
   return (
     <div className="min-h-screen w-full relative overflow-x-hidden" style={{ 
-      background: 'linear-gradient(135deg, #E6F3FF 0%, #E6F9F0 50%, #F0F8FF 100%)' 
+      background: 'linear-gradient(135deg, #E6F3FF 0%, #E6F9F0 50%, #F0F8FF 100%)',
+      width: '100vw',
+      maxWidth: '100vw',
+      margin: 0,
+      padding: 0
     }}>
       {/* Animated Water Droplets Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -99,20 +102,10 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
       <main className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-12">
         {/* Hero Section */}
         <section className="text-center mb-16" aria-labelledby="hero-heading">
-          {/* Big Irrigation Logo */}
-          <motion.img
-            src={logoImage}
-            alt="Big Irrigation Logo"
-            initial={{ scale: 0, rotate: -180 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ duration: 0.8, type: 'spring' }}
-            className="inline-block h-12 mb-6"
-          />
-
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+            transition={{ delay: 0.1 }}
           >
             <h1 id="hero-heading" className="mb-2" style={{ color: '#0066CC', fontWeight: 'bold' }}>
               Irrigation Schedule Calculator

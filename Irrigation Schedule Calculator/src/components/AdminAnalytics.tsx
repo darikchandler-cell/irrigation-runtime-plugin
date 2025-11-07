@@ -108,6 +108,15 @@ export default function AdminAnalytics() {
     ? (window as any).irrigationCalcAdminData 
     : null;
 
+  // Debug: Log settings loading
+  useEffect(() => {
+    if (typeof (window as any).irrigationCalcAdminData !== 'undefined') {
+      console.log('Settings loaded:', (window as any).irrigationCalcAdminData?.settings);
+    } else {
+      console.warn('Settings not found: irrigationCalcAdminData is undefined');
+    }
+  }, []);
+
   // Settings states
   const [generalSettings, setGeneralSettings] = useState(
     wpAdminData?.settings?.general || {

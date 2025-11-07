@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import AdminAnalytics from "./components/AdminAnalytics";
+import ErrorBoundary from "./components/ErrorBoundary";
 import "./index.css";
 
 // Function to mount React app
@@ -10,7 +11,11 @@ function mountApp() {
   if (adminRoot) {
     // We're in WordPress admin - render AdminAnalytics
     console.log("Irrigation Calculator: Mounting AdminAnalytics component");
-    createRoot(adminRoot).render(<AdminAnalytics />);
+    createRoot(adminRoot).render(
+      <ErrorBoundary>
+        <AdminAnalytics />
+      </ErrorBoundary>
+    );
     return;
   }
   
@@ -41,7 +46,11 @@ function mountApp() {
       const rootId = retryRoot.id;
       console.log(`Irrigation Calculator: Found root element (${rootId}), mounting now`);
       if (rootId === "irrigation-calculator-admin-root") {
-        createRoot(retryRoot).render(<AdminAnalytics />);
+        createRoot(retryRoot).render(
+          <ErrorBoundary>
+            <AdminAnalytics />
+          </ErrorBoundary>
+        );
       } else {
         createRoot(retryRoot).render(<App />);
       }

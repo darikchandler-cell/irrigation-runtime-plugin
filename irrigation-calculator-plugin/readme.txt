@@ -4,7 +4,7 @@ Tags: irrigation, sprinkler, watering, schedule, calculator, lawn, garden, water
 Requires at least: 5.8
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -177,7 +177,23 @@ International zones planned for future releases.
 * WCAG 2.1 AA accessibility
 * Mobile-first responsive design
 
+== Changelog ==
+
+= 1.0.1 =
+* Fixed Google Places API initialization error (proper error handling)
+* Fixed settings loading issue (settings now properly passed to frontend)
+* Removed hard-coded logo from landing page
+* Fixed background to span full width of window
+* Added error boundaries for better error handling
+* Improved WordPress integration and compatibility
+
+= 1.0.0 =
+Initial release of the Irrigation Schedule Calculator. Creates professional, weather-smart watering schedules for all major irrigation controllers.
+
 == Upgrade Notice ==
+
+= 1.0.1 =
+Bug fixes and improvements: Fixed Google Places API errors, settings loading, removed logo, full-width background, and improved error handling.
 
 = 1.0.0 =
 Initial release of the Irrigation Schedule Calculator. Creates professional, weather-smart watering schedules for all major irrigation controllers.

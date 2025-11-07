@@ -3,7 +3,7 @@
  * Plugin Name: Irrigation Schedule Calculator
  * Plugin URI: https://vonareva.com/irrigation-calculator
  * Description: Smart irrigation schedule calculator with weather integration, water savings calculations, and email delivery. Works with Rain Bird, Hunter, Toro, Rachio, Hydrawise, and all major controllers.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author: Vonareva
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('IRRIGATION_CALC_VERSION', '1.0.0');
+define('IRRIGATION_CALC_VERSION', '1.0.1');
 define('IRRIGATION_CALC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('IRRIGATION_CALC_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('IRRIGATION_CALC_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -196,7 +196,7 @@ class Irrigation_Calculator {
             );
         }
         
-        // Localize script with AJAX URL and nonce
+        // Localize script with AJAX URL, nonce, and settings
         wp_localize_script('irrigation-calculator-app', 'irrigationCalcData', array(
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('irrigation_calc_nonce'),
@@ -204,6 +204,31 @@ class Irrigation_Calculator {
             'hasPlacesAPI' => !empty($google_api_key),
             'pluginUrl' => IRRIGATION_CALC_PLUGIN_URL,
             'debug' => defined('WP_DEBUG') && WP_DEBUG,
+            'settings' => array(
+                'general' => array(
+                    'pluginName' => get_option('irrigation_calc_plugin_name', 'Irrigation Schedule Calculator'),
+                    'defaultScheduleName' => get_option('irrigation_calc_default_schedule_name', 'My Irrigation Schedule'),
+                    'enableAutosave' => (bool) get_option('irrigation_calc_enable_autosave', true),
+                    'showLandingPage' => (bool) get_option('irrigation_calc_show_landing_page', true),
+                    'requireRegistration' => (bool) get_option('irrigation_calc_require_registration', false),
+                ),
+                'api' => array(
+                    'openweatherApiKey' => get_option('irrigation_calc_openweather_api_key', ''),
+                    'googlePlacesApiKey' => get_option('irrigation_calc_google_places_api_key', ''),
+                    'waterRatesApi' => get_option('irrigation_calc_water_rates_api', ''),
+                    'enableWeatherAdjustments' => (bool) get_option('irrigation_calc_enable_weather_adjustments', true),
+                ),
+                'email' => array(
+                    'fromEmail' => get_option('irrigation_calc_from_email', get_option('admin_email')),
+                    'fromName' => get_option('irrigation_calc_from_name', get_option('blogname')),
+                    'replyToEmail' => get_option('irrigation_calc_reply_to_email', get_option('admin_email')),
+                    'adminEmail' => get_option('irrigation_calc_admin_email', get_option('admin_email')),
+                    'sendAdminNotifications' => (bool) get_option('irrigation_calc_send_admin_notifications', true),
+                    'attachPdf' => (bool) get_option('irrigation_calc_attach_pdf', true),
+                    'emailSubject' => get_option('irrigation_calc_email_subject', 'Your Irrigation Schedule - {{schedule_name}}'),
+                    'emailTemplate' => get_option('irrigation_calc_email_template', 'Hello {{name}},\n\nThank you for using our Irrigation Schedule Calculator!\n\nYour personalized watering schedule has been created for {{location}}.\n\nSchedule Details:\n- Schedule Name: {{schedule_name}}\n- Number of Zones: {{zone_count}}\n- Total Weekly Watering Time: {{total_time}}\n\nBest regards,\nIrrigation Calculator Team'),
+                ),
+            ),
         ));
     }
     

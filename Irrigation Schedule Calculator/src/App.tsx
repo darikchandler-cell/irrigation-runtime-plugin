@@ -393,12 +393,16 @@ function App() {
         {/* WordPress integration - full width container */}
         <style>{`
           .irrigation-calculator-wrapper {
-            width: 100% !important;
-            max-width: 100% !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
             margin: 0 !important;
             padding: 0 !important;
             position: relative;
             z-index: 1;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
           }
           .irrigation-calculator-wrapper > div {
             width: 100% !important;
@@ -406,12 +410,21 @@ function App() {
           }
           /* Ensure calculator spans full width, above header/footer */
           #irrigation-calculator-root {
-            width: 100% !important;
-            max-width: 100% !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
             margin: 0 !important;
             padding: 0 !important;
             position: relative;
             z-index: 9999;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+          }
+          /* Ensure landing page background spans full width */
+          .irrigation-calculator-wrapper > div > div:first-child {
+            width: 100vw !important;
+            max-width: 100vw !important;
           }
         `}</style>
         

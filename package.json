@@ -1,0 +1,13 @@
+{
+  "name": "irrigation-calculator-plugin-test",
+  "version": "1.0.0",
+  "description": "Test automation for Irrigation Calculator WordPress Plugin",
+  "scripts": {
+    "test:browser": "node automate-browser-test.js",
+    "test:plugin": "./test-plugin-complete.sh"
+  },
+  "devDependencies": {
+    "puppeteer": "^21.0.0"
+  }
+}
+
