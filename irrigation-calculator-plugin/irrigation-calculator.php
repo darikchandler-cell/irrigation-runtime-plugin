@@ -3,7 +3,7 @@
  * Plugin Name: Irrigation Schedule Calculator
  * Plugin URI: https://vonareva.com/irrigation-calculator
  * Description: Smart irrigation schedule calculator with weather integration, water savings calculations, and email delivery. Works with Rain Bird, Hunter, Toro, Rachio, Hydrawise, and all major controllers.
- * Version: 1.0.2
+ * Version: 1.0.3
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author: Vonareva
@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) {
 
 // Define plugin constants (only if not already defined)
 if (!defined('IRRIGATION_CALC_VERSION')) {
-    define('IRRIGATION_CALC_VERSION', '1.0.2');
+    define('IRRIGATION_CALC_VERSION', '1.0.3');
 }
 if (!defined('IRRIGATION_CALC_PLUGIN_DIR')) {
 define('IRRIGATION_CALC_PLUGIN_DIR', plugin_dir_path(__FILE__));
