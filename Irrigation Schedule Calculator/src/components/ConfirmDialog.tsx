@@ -1,5 +1,6 @@
 import { AlertTriangle, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { createPortal } from 'react-dom';
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -44,41 +45,39 @@ export default function ConfirmDialog({
 
   if (!isOpen) return null;
 
-  return (
+  const modalContent = (
     <AnimatePresence>
       {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 bg-black bg-opacity-50 z-50"
-            aria-hidden="true"
-          />
-
-          {/* Dialog */}
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            onKeyDown={handleKeyDown}
-          >
+        <div
+          className="fixed inset-0 flex items-center justify-center p-4 pointer-events-none overflow-y-auto"
+          style={{ zIndex: 1000002, pointerEvents: 'none' }}
+          onKeyDown={handleKeyDown}
+        >
             <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ type: 'spring', damping: 20 }}
-              className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative"
+              className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative my-auto"
+              style={{ 
+                maxHeight: '90vh', 
+                overflowY: 'auto',
+                zIndex: 1000003,
+                pointerEvents: 'auto'
+              }}
               role="dialog"
               aria-modal="true"
               aria-labelledby="dialog-title"
               aria-describedby="dialog-description"
+              onClick={(e) => e.stopPropagation()}
             >
               {/* Close button */}
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                style={{ pointerEvents: 'auto', zIndex: 1000005 }}
                 aria-label="Close dialog"
+                type="button"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -100,28 +99,38 @@ export default function ConfirmDialog({
               </p>
 
               {/* Actions */}
-              <div className="flex gap-3">
+              <div className="flex gap-3" style={{ pointerEvents: 'auto', position: 'relative', zIndex: 1000004 }}>
                 <button
                   onClick={onClose}
-                  className="flex-1 px-4 py-2.5 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex-1 px-4 py-2.5 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                  style={{ pointerEvents: 'auto', position: 'relative', zIndex: 1000005 }}
+                  type="button"
                 >
                   {cancelText}
                 </button>
                 <button
                   onClick={handleConfirm}
-                  className="flex-1 px-4 py-2.5 text-white rounded-lg transition-all duration-200"
+                  className="flex-1 px-4 py-2.5 text-white rounded-lg transition-all duration-200 cursor-pointer"
                   style={{
                     backgroundColor: color.button,
                     boxShadow: `0 4px 12px ${color.button}40`,
+                    pointerEvents: 'auto',
+                    position: 'relative',
+                    zIndex: 1000005
                   }}
+                  type="button"
                 >
                   {confirmText}
                 </button>
               </div>
             </motion.div>
-          </div>
-        </>
+        </div>
       )}
     </AnimatePresence>
   );
+
+  // Render modal to document.body using portal to ensure it appears above everything
+  return typeof document !== 'undefined' 
+    ? createPortal(modalContent, document.body)
+    : null;
 }

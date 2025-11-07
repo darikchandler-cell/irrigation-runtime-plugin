@@ -9,7 +9,7 @@ import { submitSchedule } from '../utils/wordpressAPI';
 import { getWeatherForecast, WeatherData } from '../utils/weatherAPI';
 import { detectClimateZone, getCurrentSeason, ClimateZoneData } from '../utils/climateZones';
 import { selectOptimalWateringDays } from '../utils/scheduleOptimizer';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { 
   addScheduleSavings, 
   calculateScheduleSavings, 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Check, Copy, ChevronLeft, Info, Calendar, AlertCircle } from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import WizardProgress from './WizardProgress';
 import { Zone, AppSettings } from '../App';
 import { ImageWithFallback } from './figma/ImageWithFallback';

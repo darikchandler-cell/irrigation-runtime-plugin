@@ -3,7 +3,7 @@
  * Plugin Name: Irrigation Schedule Calculator
  * Plugin URI: https://vonareva.com/irrigation-calculator
  * Description: Smart irrigation schedule calculator with weather integration, water savings calculations, and email delivery. Works with Rain Bird, Hunter, Toro, Rachio, Hydrawise, and all major controllers.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author: Vonareva
@@ -21,15 +21,24 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Define plugin constants
-define('IRRIGATION_CALC_VERSION', '1.0.1');
+// Define plugin constants (only if not already defined)
+if (!defined('IRRIGATION_CALC_VERSION')) {
+    define('IRRIGATION_CALC_VERSION', '1.0.2');
+}
+if (!defined('IRRIGATION_CALC_PLUGIN_DIR')) {
 define('IRRIGATION_CALC_PLUGIN_DIR', plugin_dir_path(__FILE__));
+}
+if (!defined('IRRIGATION_CALC_PLUGIN_URL')) {
 define('IRRIGATION_CALC_PLUGIN_URL', plugin_dir_url(__FILE__));
+}
+if (!defined('IRRIGATION_CALC_PLUGIN_BASENAME')) {
 define('IRRIGATION_CALC_PLUGIN_BASENAME', plugin_basename(__FILE__));
+}
 
 /**
  * Main Plugin Class
  */
+if (!class_exists('Irrigation_Calculator')) {
 class Irrigation_Calculator {
     
     /**
@@ -177,10 +186,18 @@ class Irrigation_Calculator {
             true
         );
         
+        // Enqueue Google Fonts (Inter) for Figma design
+        wp_enqueue_style(
+            'irrigation-calculator-fonts',
+            'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap',
+            array(),
+            null
+        );
+        
         wp_enqueue_style(
             'irrigation-calculator-styles',
             IRRIGATION_CALC_PLUGIN_URL . 'build/app.css',
-            array(),
+            array('irrigation-calculator-fonts'),
             IRRIGATION_CALC_VERSION
         );
         
@@ -305,7 +322,214 @@ class Irrigation_Calculator {
             $debug_info = '<!-- Irrigation Calculator Debug: Plugin loaded, shortcode rendered -->';
         }
         
-        return $debug_info . '<div id="irrigation-calculator-root"></div>';
+        // Add inline styles to prevent layout shift and block theme - AGGRESSIVE
+        $inline_styles = '<style>
+          #irrigation-calculator-root {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            height: 100vh !important;
+            min-height: 100vh !important;
+            max-height: 100vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            position: fixed !important;
+            left: 0 !important;
+            right: 0 !important;
+            top: 0 !important;
+            bottom: 0 !important;
+            z-index: 999999 !important;
+            display: block !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            pointer-events: auto !important;
+            touch-action: pan-y !important;
+            -webkit-overflow-scrolling: touch !important;
+          }
+          .irrigation-calculator-wrapper {
+            position: relative !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            pointer-events: auto !important;
+          }
+          /* Remove body/html padding and block scrolling */
+          body, html {
+            padding: 0 !important;
+            margin: 0 !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            overflow-x: hidden !important;
+            overflow-y: hidden !important;
+            height: 100vh !important;
+            width: 100vw !important;
+            position: relative !important;
+          }
+          /* BLOCK ALL WORDPRESS THEME INTERFERENCE */
+          main, article, .entry-content, .wp-block-post-content, .wp-block-group, .wp-site-blocks {
+            padding: 0 !important;
+            margin: 0 !important;
+            max-width: none !important;
+            width: 100% !important;
+            position: relative !important;
+            overflow: visible !important;
+            pointer-events: none !important;
+          }
+          /* Only our plugin receives clicks */
+          #irrigation-calculator-root, #irrigation-calculator-root * {
+            pointer-events: auto !important;
+          }
+          /* Block theme elements from receiving clicks */
+          #irrigation-calculator-root ~ * {
+            pointer-events: none !important;
+            z-index: 1 !important;
+          }
+          /* Hide theme header/footer */
+          header, .site-header, footer, .site-footer,
+          .wp-block-template-part[data-area="header"],
+          .wp-block-template-part[data-area="footer"] {
+            display: none !important;
+          }
+          /* Hide WordPress page title */
+          main > h1:first-of-type,
+          article > h1:first-of-type,
+          .entry-title,
+          .page-title,
+          .post-title,
+          main > h1,
+          article > h1,
+          h1.wp-block-post-title {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+          }
+          /* Remove padding from main/article containers */
+          main:has(#irrigation-calculator-root),
+          article:has(#irrigation-calculator-root),
+          .entry-content:has(#irrigation-calculator-root),
+          main > *:has(#irrigation-calculator-root),
+          article > *:has(#irrigation-calculator-root) {
+            padding: 0 !important;
+            margin: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+          }
+          
+          /* Remove padding from parent of root */
+          *:has(> #irrigation-calculator-root) {
+            padding-top: 0 !important;
+            margin-top: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+          }
+          /* BLOCK ALL THEME FONTS - Force Inter on EVERY SINGLE ELEMENT - NO EXCEPTIONS */
+          /* ALL UI elements use the same font family - Inter */
+          
+          /* Force Inter on ALL elements - most aggressive - EVERYTHING uses the same font */
+          *,
+          *::before,
+          *::after {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif !important;
+          }
+          
+          /* Force Inter on body/html and ALL children - no exceptions */
+          body,
+          html,
+          body *,
+          html * {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif !important;
+          }
+          
+          /* Force Inter on ALL plugin elements - EVERYTHING */
+          .irrigation-calculator-wrapper,
+          .irrigation-calculator-wrapper *,
+          .irrigation-calculator-wrapper *::before,
+          .irrigation-calculator-wrapper *::after,
+          #irrigation-calculator-root,
+          #irrigation-calculator-root *,
+          #irrigation-calculator-root *::before,
+          #irrigation-calculator-root *::after,
+          body:has(#irrigation-calculator-root) *,
+          html:has(#irrigation-calculator-root) *,
+          main:has(#irrigation-calculator-root) *,
+          article:has(#irrigation-calculator-root) * {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif !important;
+          }
+          
+          /* Force Inter on ALL text elements - headings, paragraphs, buttons, everything */
+          h1, h2, h3, h4, h5, h6,
+          p, span, div, a, button, label, input, textarea, select, li, ul, ol,
+          em, strong, b, i, u, small, code, pre, blockquote,
+          table, thead, tbody, tr, td, th {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif !important;
+          }
+          
+          /* Reduce h1, h2, h3 font sizes by 8% - subtle reduction to keep them larger than paragraphs */
+          #irrigation-calculator-root h1,
+          .irrigation-calculator-wrapper h1 {
+            font-size: calc(1.5rem * 0.92) !important; /* 8% reduction from default h1 */
+          }
+          
+          /* For h1 with text-3xl, text-4xl, text-5xl classes - reduce by 8% */
+          #irrigation-calculator-root h1.text-3xl,
+          .irrigation-calculator-wrapper h1.text-3xl {
+            font-size: calc(1.875rem * 0.92) !important;
+          }
+          #irrigation-calculator-root h1.text-4xl,
+          .irrigation-calculator-wrapper h1.text-4xl {
+            font-size: calc(2.25rem * 0.92) !important;
+          }
+          #irrigation-calculator-root h1.text-5xl,
+          .irrigation-calculator-wrapper h1.text-5xl {
+            font-size: calc(3rem * 0.92) !important;
+          }
+          
+          #irrigation-calculator-root h2,
+          .irrigation-calculator-wrapper h2 {
+            font-size: calc(1.25rem * 0.92) !important; /* 8% reduction from default h2 */
+          }
+          
+          /* For h2 with text-2xl, text-3xl classes - reduce by 8% */
+          #irrigation-calculator-root h2.text-2xl,
+          .irrigation-calculator-wrapper h2.text-2xl {
+            font-size: calc(1.5rem * 0.92) !important;
+          }
+          #irrigation-calculator-root h2.text-3xl,
+          .irrigation-calculator-wrapper h2.text-3xl {
+            font-size: calc(1.875rem * 0.92) !important;
+          }
+          
+          #irrigation-calculator-root h3,
+          .irrigation-calculator-wrapper h3 {
+            font-size: calc(1.125rem * 0.92) !important; /* 8% reduction from default h3 */
+          }
+          
+          /* For h3 with text-xl, text-2xl classes - reduce by 8% */
+          #irrigation-calculator-root h3.text-xl,
+          .irrigation-calculator-wrapper h3.text-xl {
+            font-size: calc(1.25rem * 0.92) !important;
+          }
+          #irrigation-calculator-root h3.text-2xl,
+          .irrigation-calculator-wrapper h3.text-2xl {
+            font-size: calc(1.5rem * 0.92) !important;
+          }
+        </style>';
+        
+        return $debug_info . $inline_styles . '<div id="irrigation-calculator-root" style="width: 100vw; min-height: 100vh; margin: 0; padding: 0;"></div>';
     }
     
     /**
@@ -984,6 +1208,11 @@ class Irrigation_Calculator {
         wp_send_json_success($status);
     }
 }
+} // End class_exists check
 
-// Initialize plugin
-new Irrigation_Calculator();
+// Initialize plugin (only if class exists and not already instantiated)
+if (class_exists('Irrigation_Calculator')) {
+    if (!isset($GLOBALS['irrigation_calculator'])) {
+        $GLOBALS['irrigation_calculator'] = new Irrigation_Calculator();
+    }
+}

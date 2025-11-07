@@ -13,6 +13,28 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
   const [moneySaved, setMoneySaved] = useState(0);
   const [co2Reduced, setCo2Reduced] = useState(0);
   const [schedulesCreated, setSchedulesCreated] = useState(0);
+  const [padding, setPadding] = useState({ top: '2rem', bottom: '2rem' });
+  
+
+  // Set responsive padding with !important to override CSS
+  useEffect(() => {
+    const updatePadding = () => {
+      const paddingValue = window.innerWidth >= 640 ? '3rem' : '2rem';
+      setPadding({
+        top: paddingValue,
+        bottom: paddingValue
+      });
+      // Also set directly with !important to override any CSS
+      const container = document.querySelector('.min-h-screen');
+      if (container) {
+        (container as HTMLElement).style.setProperty('padding-top', paddingValue, 'important');
+        (container as HTMLElement).style.setProperty('padding-bottom', paddingValue, 'important');
+      }
+    };
+    updatePadding();
+    window.addEventListener('resize', updatePadding);
+    return () => window.removeEventListener('resize', updatePadding);
+  }, []);
 
   // Load and animate to cumulative stats
   useEffect(() => {
@@ -59,13 +81,17 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
   }, []);
 
   return (
-    <div className="min-h-screen w-full relative overflow-x-hidden" style={{ 
-      background: 'linear-gradient(135deg, #E6F3FF 0%, #E6F9F0 50%, #F0F8FF 100%)',
-      width: '100vw',
-      maxWidth: '100vw',
-      margin: 0,
-      padding: 0
-    }}>
+    <div 
+      className="min-h-screen w-full relative overflow-x-hidden" 
+      style={{ 
+        background: 'linear-gradient(135deg, #E6F3FF 0%, #E6F9F0 50%, #F0F8FF 100%)',
+        width: '100vw',
+        maxWidth: '100vw',
+        margin: 0,
+        paddingTop: padding.top,
+        paddingBottom: padding.bottom
+      }}
+    >
       {/* Animated Water Droplets Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(15)].map((_, i) => (
@@ -99,7 +125,7 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
         ))}
       </div>
 
-      <main className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-12">
+      <main className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-16 sm:py-20">
         {/* Hero Section */}
         <section className="text-center mb-16" aria-labelledby="hero-heading">
           <motion.div
@@ -107,10 +133,20 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <h1 id="hero-heading" className="mb-2" style={{ color: '#0066CC', fontWeight: 'bold' }}>
+            <h1 
+              id="hero-heading" 
+              className="mb-2 text-3xl sm:text-4xl lg:text-5xl" 
+              style={{ 
+                color: '#0066CC', 
+                fontWeight: 'bold',
+                fontSize: 'clamp(1.25rem, 2.5vw, 2.25rem)'
+              }}
+            >
               Irrigation Schedule Calculator
             </h1>
-            <h2 className="text-2xl sm:text-3xl mb-4 text-gray-700">
+            <h2 
+              className="text-2xl sm:text-3xl mb-4 text-gray-700"
+            >
               For Rain Bird, Hunter, Toro, Rachio & All Sprinkler Controllers
             </h2>
           </motion.div>

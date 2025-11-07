@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TrendingUp, Calendar, Users, Droplet, Download, ChevronDown, Eye, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -10,7 +10,7 @@ import {
   sendTestEmail,
   checkAPIStatus 
 } from '../utils/wordpressAPI';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 
 // Version number for the plugin
 const PLUGIN_VERSION = '1.1.0';

@@ -1,6 +1,7 @@
 import { Droplet, ArrowLeft } from 'lucide-react';
 import { motion } from 'motion/react';
-import logoImage from 'figma:asset/045d67862979a2173d3073297ca5679229a01de1.png';
+
+const LOGO_URL = 'https://bigirrigation.com/wp-content/uploads/2022/10/bigirrigation.com-Big-Irrigation-Supply-Main-Logo.svg';
 
 interface HeaderProps {
   onBack?: () => void;
@@ -31,10 +32,20 @@ export default function Header({ onBack, showBackButton, onLogoClick }: HeaderPr
             <div className="flex items-center gap-3">
               <button
                 onClick={onLogoClick}
-                className="group cursor-pointer transition-opacity hover:opacity-80"
+                className="group cursor-pointer transition-opacity hover:opacity-80 flex items-center gap-2"
                 aria-label="Return to home"
               >
-                <img src={logoImage} alt="Big Irrigation" className="h-10" />
+                <img 
+                  src={LOGO_URL} 
+                  alt="Big Irrigation" 
+                  className="h-10 w-auto"
+                  style={{ maxWidth: '200px', height: '40px', objectFit: 'contain' }}
+                  onError={(e) => {
+                    console.error('Logo failed to load:', LOGO_URL);
+                    // Fallback to text if image fails
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
                 <p className="text-xs text-gray-500 group-hover:text-blue-600 transition-colors">Smart Irrigation Calculator</p>
               </button>
             </div>
